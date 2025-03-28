@@ -1,0 +1,918 @@
+Enter password: *************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 8.0.28 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database TT_Holdings;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use TT_Holdings
+Database changed
+mysql> CREATE TABLE Person (
+    ->     PersonID INT PRIMARY KEY,
+    ->     Name VARCHAR(50),
+    ->     Address VARCHAR(60),
+    ->     Phone VARCHAR(50),
+    ->     BirthDate DATE
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE Organization (
+    ->     OrganizationID INT PRIMARY KEY,
+    ->     Name VARCHAR(50),
+    ->     Address VARCHAR(60),
+    ->     Phone VARCHAR(50),
+    ->     BudgetNumber VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE Employment (
+    ->     EmploymentID INT PRIMARY KEY,
+    ->     EmploymentDate DATE,
+    ->     TerminationDate DATE,
+    ->     PersonID INT,
+    ->     OrganizationID INT,
+    ->     Bonus DECIMAL(10, 2),
+    ->     FOREIGN KEY (PersonID) REFERENCES Person(PersonID),
+    ->     FOREIGN KEY (OrganizationID) REFERENCES Organization(OrganizationID)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> CREATE TABLE Position (
+    ->     PositionID INT PRIMARY KEY,
+    ->     Title VARCHAR(60),
+    ->     Salary DECIMAL(10, 2),
+    ->     OrganizationID INT,
+    ->     FOREIGN KEY (OrganizationID) REFERENCES Organization(OrganizationID)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+
+mysql> CREATE TABLE EmploymentPosition (
+    ->     EmploymentPositionID INT PRIMARY KEY,
+    ->     StartDate DATE,
+    ->     EndDate DATE,
+    ->     Salary DECIMAL(10, 2),
+    ->     PositionID INT,
+    ->     PersonID INT,
+    ->     FOREIGN KEY (PositionID) REFERENCES `Position`(PositionID),
+    ->     FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
+    -> );
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> CREATE TABLE PermanentEmployee (
+    ->     PersonID INT PRIMARY KEY,
+    ->     BonusAmount DECIMAL(10, 2),
+    ->     Credit DECIMAL(10, 2),
+    ->     FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE PartTimeEmployee (
+    ->     PersonID INT PRIMARY KEY,
+    ->     ExtraHours INT,
+    ->     FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> CREATE TABLE OrganizationType (
+    ->     OrganizationTypeID INT PRIMARY KEY,
+    ->     Type VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE BonusDetails (
+    ->     BonusID INT PRIMARY KEY,
+    ->     BonusType VARCHAR(50),
+    ->     BonusAmount DECIMAL(10, 2),
+    ->     Date DATE,
+    ->     EmploymentPositionID INT,
+    ->     FOREIGN KEY (EmploymentPositionID) REFERENCES EmploymentPosition(EmploymentPositionID)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+
+mysql> CREATE TABLE SalaryDetails (
+    ->     SalaryID INT PRIMARY KEY,
+    ->     SalaryAmount DECIMAL(10, 2),
+    ->     Date DATE,
+    ->     PositionID INT,
+    ->     FOREIGN KEY (PositionID) REFERENCES `Position`(PositionID)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql>
+
+INSERT INTO Person (PersonID, Name, Address, Phone, BirthDate) 
+VALUES 
+(1, 'Kekeletso Lipholoana', 'Maseru,Ha Abia', '+266 59503608', '1990-05-15'),
+(2, 'Mathabo Majoro', 'Mafeteng, Ha Fosa', '+266 5851234', '1999-07-20'),
+(3, 'Tumelo Hlabanyane', 'Maseru , Ha  Mabote', '+266 5959876', '1992-11-25'),
+(4, 'Lephallo Monke', 'Maseru, Thetsane West', '+266 5856543', '1987-03-10'),
+(5, 'Teboho Mosito', 'Leribe ,Maputsoe', '+266 5951122', '1995-06-30'),
+(6, 'Limpho Lephoto', 'Qacha’s Nek, Tšenola', '+266 5953344', '1993-08-12'),
+(7, 'Relebohile Nkhasi', 'Leribe, Ha Maqheka', '+266 5955566', '1998-04-05'),
+(8, 'Likotsi Malefane', 'Maseru, Moiloa', '+266 5957788', '1994-01-14'),
+(9, 'Khotso Mphofu', 'Quthing, Mphaki', '+266 5959900', '1991-12-22'),
+(10, 'Lerato Lesole', 'Mokhotlong, Qhoalinyane', '+266 5952233', '1996-09-09');
+
+INSERT INTO Organization (OrganizationID, Name, Address, Phone, BudgetNumber) 
+VALUES 
+(10, 'Yarona Tech Innovators', 'Maseru, Ha Abia', '+266 62345676', 'B001'),
+(20, 'Bacha Healthcare Solutions', 'Maseru, Maseru Mall', '+266 22345678', 'B002'),
+(30, 'Balumeli Educational Systems', 'Leribe, Maputsoe', '+266 523456789', 'B003'),
+(40, 'Masowe Finance Solutions', 'Maseru, Masowe', '+266 64567890', 'B004'),
+(50, 'Retail Logistics', 'Maseru, Industrial Area', '+266 65678901', 'B005'),
+(60, 'Agricultural Co-op', 'Maseru, Agricultural Center', '+266 62789012', 'B006'),
+(70, 'Environmental Group', 'Maseru, Green Valley', '+266 57890123', 'B007'),
+(80, 'Majoro Transport Services', 'Maseru, Face2', '+266 58901234', 'B008'),
+(90, 'Active Consulting Firm', 'Maseru, Business Park', '+266 59012345', 'B009'),
+(100, 'Lepolesa Construction Corp', 'Maseru, Westside', '+266 50123456', 'B010');
+
+
+INSERT INTO Position (PositionID, Title, Salary, OrganizationID) 
+VALUES
+(1, 'Software Engineer', 50000.00, 10),
+(2, 'Nurse', 40000.00, 20),
+(3, 'Teacher', 35000.00, 30),
+(4, 'Finance Officer', 60000.00, 40),
+(5, 'Logistics Coordinator', 45000.00, 50),
+(6, 'Agricultural Specialist', 42000.00, 60),
+(7, 'Environmental Scientist', 47000.00, 70),
+(8, 'Transport Manager', 48000.00, 80),
+(9, 'Consultant', 55000.00, 90),
+(10, 'Construction Manager', 60000.00, 100),
+(11, 'Manager', 70000.00, 60);
+
+INSERT INTO Employment (EmploymentID, EmploymentDate, TerminationDate, PersonID, OrganizationID, Bonus)
+VALUES 
+(1, '2023-01-15', NULL, 1, 10, 1000.00),
+(2, '2023-02-20', '2023-06-01', 2, 20, NULL),
+(3, '2023-03-25', NULL, 3, 30, 2000.00),
+(4, '2023-04-05', '2023-05-10', 4, 40, 1200.00),
+(5, '2023-04-15', NULL, 5, 50, 900.00),
+(6, '2023-05-10', NULL, 6, 60, NULL),
+(7, '2023-05-25', NULL, 7, 70, 950.00),
+(8, '2023-06-01', NULL, 8, 80, 1100.00),
+(9, '2023-06-10', '2023-07-01', 9, 90, 800.00),
+(10, '2023-06-15', NULL, 10, 100, 850.00),
+(11, '2023-07-01', NULL, 1, 20, 1025.00),
+(12, '2023-07-05', '2023-07-15', 3, 40, 1150.00),
+(13, '2023-07-10', NULL, 5, 30, NULL),
+(14, '2023-07-15', NULL, 7, 10, 1050.00);
+
+
+
+INSERT INTO PermanentEmployee (PersonID, BonusAmount, Credit)
+VALUES 
+(1, 5000.00, 1000.00),
+(2, 3000.00, 500.00),
+(3, 4500.00, 1500.00),
+(4, 4000.00, 1000.00),
+(5, 2500.00, 200.00),
+(6, 5500.00, 1200.00),
+(7, 6500.00, 1800.00),
+(8, 3200.00, 600.00),
+(9, 7000.00, 2000.00),
+(10, 3800.00, 900.00);
+
+INSERT INTO PartTimeEmployee (PersonID, ExtraHours)
+VALUES 
+(11, 10),
+(12, 15),
+(13, 5),
+(14, 20),
+(15, 12);
+
+
+INSERT INTO OrganizationType (OrganizationTypeID, Type)
+VALUES 
+(1, 'Non-profit'),
+(2, 'For-profit'),
+(3, 'Government'),
+(4, 'Education'),
+(5, 'Healthcare'),
+(6, 'Technology'),
+(7, 'Manufacturing'),
+(8, 'Retail'),
+(9, 'Consulting'),
+(10, 'Transportation');
+
+INSERT INTO BonusDetails (BonusID, BonusType, BonusAmount, Date, EmploymentPositionID)
+VALUES 
+(1, 'Performance Bonus', 1000.00, '2022-12-15', 1),
+(2, 'Annual Bonus', 500.00, '2023-10-01', 2),
+(3, 'Signing Bonus', 800.00, '2021-08-15', 3),
+(4, 'Referral Bonus', 300.00, '2023-09-10', 4),
+(5, 'Retention Bonus', 1200.00, '2022-11-05', 5),
+(6, 'Team Bonus', 1500.00, '2023-03-20', 6),
+(7, 'Holiday Bonus', 250.00, '2023-12-01', 7),
+(8, 'Project Completion Bonus', 1800.00, '2023-01-15', 8),
+(9, 'Client Satisfaction Bonus', 900.00, '2023-02-10', 9),
+(10, 'Leadership Bonus', 1300.00, '2023-06-30', 10);
+
+INSERT INTO SalaryDetails (SalaryID, SalaryAmount, Date, PositionID)
+VALUES 
+(1, 50000.00, '2022-01-01', 1),
+(2, 40000.00, '2022-05-01', 2),
+(3, 35000.00, '2023-01-15', 3),
+(4, 60000.00, '2020-04-05', 4),
+(5, 45000.00, '2022-04-15', 5),
+(6, 75000.00, '2023-03-01', 6),
+(7, 47000.00, '2023-02-01', 7),
+(8, 49000.00, '2023-06-01', 8),
+(9, 55000.00, '2023-05-01', 9),
+(10, 68000.00, '2023-05-15', 10);
+
+
+INSERT INTO OrganizationType (OrganizationTypeID, Type)
+VALUES 
+(1, 'Non-profit'),
+(2, 'For-profit'),
+(3, 'Government'),
+(4, 'Education'),
+(5, 'Healthcare'),
+(6, 'Technology'),
+(7, 'Manufacturing'),
+(8, 'Retail'),
+(9, 'Consulting'),
+(10, 'Transportation');
+
+mysql> SHOW TABLES;
++-----------------------+
+| Tables_in_tt_holdings |
++-----------------------+
+| bonusdetails          |
+| employment            |
+| employmentposition    |
+| organization          |
+| organizationtype      |
+| parttimeemployee      |
+| permanentemployee     |
+| person                |
+| position              |
+| salarydetails         |
++-----------------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM BONUSDETAILS;
++---------+---------------------------+-------------+------------+----------------------+
+| BonusID | BonusType                 | BonusAmount | Date       | EmploymentPositionID |
++---------+---------------------------+-------------+------------+----------------------+
+|       1 | Performance Bonus         |     1000.00 | 2022-12-15 |                    1 |
+|       2 | Annual Bonus              |      500.00 | 2023-10-01 |                    2 |
+|       3 | Signing Bonus             |      800.00 | 2021-08-15 |                    3 |
+|       4 | Referral Bonus            |      300.00 | 2023-09-10 |                    4 |
+|       5 | Retention Bonus           |     1200.00 | 2022-11-05 |                    5 |
+|       6 | Team Bonus                |     1500.00 | 2023-03-20 |                    6 |
+|       7 | Holiday Bonus             |      250.00 | 2023-12-01 |                    7 |
+|       8 | Project Completion Bonus  |     1800.00 | 2023-01-15 |                    8 |
+|       9 | Client Satisfaction Bonus |      900.00 | 2023-02-10 |                    9 |
+|      10 | Leadership Bonus          |     1300.00 | 2023-06-30 |                   10 |
++---------+---------------------------+-------------+------------+----------------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM EMPLOYMENT;
++--------------+----------------+-----------------+----------+----------------+---------+
+| EmploymentID | EmploymentDate | TerminationDate | PersonID | OrganizationID | Bonus   |
++--------------+----------------+-----------------+----------+----------------+---------+
+|            1 | 2023-01-15     | NULL            |        1 |             10 | 1000.00 |
+|            2 | 2023-02-20     | 2023-06-01      |        2 |             20 |    NULL |
+|            3 | 2023-03-25     | NULL            |        3 |             30 | 2000.00 |
+|            4 | 2023-04-05     | 2023-05-10      |        4 |             40 | 1200.00 |
+|            5 | 2023-04-15     | NULL            |        5 |             50 |  900.00 |
+|            6 | 2023-05-10     | NULL            |        6 |             60 |    NULL |
+|            7 | 2023-05-25     | NULL            |        7 |             70 |  950.00 |
+|            8 | 2023-06-01     | NULL            |        8 |             80 | 1100.00 |
+|            9 | 2023-06-10     | 2023-07-01      |        9 |             90 |  800.00 |
+|           10 | 2023-06-15     | NULL            |       10 |            100 |  850.00 |
+|           11 | 2023-07-01     | NULL            |        1 |             20 | 1025.00 |
+|           12 | 2023-07-05     | 2023-07-15      |        3 |             40 | 1150.00 |
+|           13 | 2023-07-10     | NULL            |        5 |             30 |    NULL |
+|           14 | 2023-07-15     | NULL            |        7 |             10 | 1050.00 |
++--------------+----------------+-----------------+----------+----------------+---------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT * FROM EMPLOYMENTPOSITION;
++----------------------+------------+------------+----------+------------+----------+
+| EmploymentPositionID | StartDate  | EndDate    | Salary   | PositionID | PersonID |
++----------------------+------------+------------+----------+------------+----------+
+|                    1 | 2021-01-01 | 2023-01-01 | 60000.00 |          1 |        1 |
+|                    2 | 2021-06-01 | 2023-06-01 | 70000.00 |          2 |        2 |
+|                    3 | 2020-01-01 | 2022-01-01 | 55000.00 |          3 |        3 |
+|                    4 | 2020-05-01 | 2023-05-01 | 80000.00 |          4 |        4 |
+|                    5 | 2022-01-01 | 2024-01-01 | 90000.00 |          5 |        5 |
+|                    6 | 2021-03-01 | 2024-03-01 | 75000.00 |          6 |        6 |
+|                    7 | 2023-01-01 | 2025-01-01 | 95000.00 |          7 |        7 |
+|                    8 | 2020-09-01 | 2023-09-01 | 50000.00 |          8 |        8 |
+|                    9 | 2022-05-01 | NULL       | 85000.00 |          9 |        9 |
+|                   10 | 2023-04-01 | NULL       | 99000.00 |         10 |       10 |
++----------------------+------------+------------+----------+------------+----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM ORGANIZATION;
++----------------+------------------------------+-----------------------------+----------------+--------------+
+| OrganizationID | Name                         | Address                     | Phone          | BudgetNumber |
++----------------+------------------------------+-----------------------------+----------------+--------------+
+|             10 | Yarona Tech Innovators       | Maseru, Ha Abia             | +266 62345676  | B001         |
+|             20 | Bacha Healthcare Solutions   | Maseru, Maseru Mall         | +266 22345678  | B002         |
+|             30 | Balumeli Educational Systems | Leribe, Maputsoe            | +266 523456789 | B003         |
+|             40 | Masowe Finance Solutions     | Maseru, Masowe              | +266 64567890  | B004         |
+|             50 | Retail Logistics             | Maseru, Industrial Area     | +266 65678901  | B005         |
+|             60 | Agricultural Co-op           | Maseru, Agricultural Center | +266 62789012  | B006         |
+|             70 | Environmental Group          | Maseru, Green Valley        | +266 57890123  | B007         |
+|             80 | Majoro Transport Services    | Maseru, Face2               | +266 58901234  | B008         |
+|             90 | Active Consulting Firm       | Maseru, Business Park       | +266 59012345  | B009         |
+|            100 | Lepolesa Construction Corp   | Maseru, Westside            | +266 50123456  | B010         |
++----------------+------------------------------+-----------------------------+----------------+--------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM ORGANIZATIONTYPE;
++--------------------+----------------+
+| OrganizationTypeID | Type           |
++--------------------+----------------+
+|                  1 | Non-profit     |
+|                  2 | For-profit     |
+|                  3 | Government     |
+|                  4 | Education      |
+|                  5 | Healthcare     |
+|                  6 | Technology     |
+|                  7 | Manufacturing  |
+|                  8 | Retail         |
+|                  9 | Consulting     |
+|                 10 | Transportation |
++--------------------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM PARTTIMEEMPLOYEE;
++----------+------------+
+| PersonID | ExtraHours |
++----------+------------+
+|       11 |         10 |
+|       12 |         15 |
+|       13 |          5 |
+|       14 |         20 |
+|       15 |         12 |
++----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM PERMANENTEMPLOYEE;
++----------+-------------+---------+
+| PersonID | BonusAmount | Credit  |
++----------+-------------+---------+
+|        1 |     5000.00 | 1000.00 |
+|        2 |     3000.00 |  500.00 |
+|        3 |     4500.00 | 1500.00 |
+|        4 |     4000.00 | 1000.00 |
+|        5 |     2500.00 |  200.00 |
+|        6 |     5500.00 | 1200.00 |
+|        7 |     6500.00 | 1800.00 |
+|        8 |     3200.00 |  600.00 |
+|        9 |     7000.00 | 2000.00 |
+|       10 |     3800.00 |  900.00 |
++----------+-------------+---------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM PERSON;
++----------+----------------------+---------------------------+---------------+------------+
+| PersonID | Name                 | Address                   | Phone         | BirthDate  |
++----------+----------------------+---------------------------+---------------+------------+
+|        1 | Kekeletso Lipholoana | Maseru,Ha Abia            | +266 59503608 | 1990-05-15 |
+|        2 | Mathabo Majoro       | Mafeteng, Ha Fosa         | +266 5851234  | 1999-07-20 |
+|        3 | Tumelo Hlabanyane    | Maseru , Ha  Mabote       | +266 5959876  | 1992-11-25 |
+|        4 | Lephallo Monke       | Maseru, Thetsane West     | +266 5856543  | 1987-03-10 |
+|        5 | Teboho Mosito        | Leribe ,Maputsoe          | +266 5951122  | 1995-06-30 |
+|        6 | Limpho Lephoto       | Qacha?s Nek, T?enola      | +266 5953344  | 1993-08-12 |
+|        7 | Relebohile Nkhasi    | Leribe, Ha Maqheka        | +266 5955566  | 1998-04-05 |
+|        8 | Likotsi Malefane     | Maseru, Moiloa            | +266 5957788  | 1994-01-14 |
+|        9 | Khotso Mphofu        | Quthing, Mphaki           | +266 5959900  | 1991-12-22 |
+|       10 | Lerato Lesole        | Mokhotlong, Qhoalinyane   | +266 5952233  | 1996-09-09 |
+|       11 | Kabelo Makhothi      | Thaba-Tseka, Ha Lehlabana | +266 5954455  | 1992-05-05 |
+|       12 | Nthabi Motanyane     | Mohale?s Hoek, Ha Molapo  | +266 5955567  | 1989-08-30 |
+|       13 | Tshepo Motaung       | Quthing, Ha Nyatsi        | +266 5953322  | 1994-11-10 |
+|       14 | Palesa Mohau         | Leribe, Ha Matlali        | +266 5957789  | 1997-04-25 |
+|       15 | Mat?oele Khabele     | Maseru, City Centre       | +266 5959988  | 1988-12-12 |
++----------+----------------------+---------------------------+---------------+------------+
+15 rows in set (0.00 sec)
+
+mysql> SELECT * FROM POSITION;
++------------+-------------------------+----------+----------------+
+| PositionID | Title                   | Salary   | OrganizationID |
++------------+-------------------------+----------+----------------+
+|          1 | Software Engineer       | 50000.00 |             10 |
+|          2 | Nurse                   | 40000.00 |             20 |
+|          3 | Teacher                 | 35000.00 |             30 |
+|          4 | Finance Officer         | 60000.00 |             40 |
+|          5 | Logistics Coordinator   | 45000.00 |             50 |
+|          6 | Agricultural Specialist | 42000.00 |             60 |
+|          7 | Environmental Scientist | 47000.00 |             70 |
+|          8 | Transport Manager       | 48000.00 |             80 |
+|          9 | Consultant              | 55000.00 |             90 |
+|         10 | Construction Manager    | 60000.00 |            100 |
+|         11 | Manager                 | 70000.00 |             60 |
++------------+-------------------------+----------+----------------+
+11 rows in set (0.00 sec)
+
+mysql> SELECT * FROM SALARYDETAILS;
++----------+--------------+------------+------------+
+| SalaryID | SalaryAmount | Date       | PositionID |
++----------+--------------+------------+------------+
+|        1 |     50000.00 | 2022-01-01 |          1 |
+|        2 |     40000.00 | 2022-05-01 |          2 |
+|        3 |     35000.00 | 2023-01-15 |          3 |
+|        4 |     60000.00 | 2020-04-05 |          4 |
+|        5 |     45000.00 | 2022-04-15 |          5 |
+|        6 |     75000.00 | 2023-03-01 |          6 |
+|        7 |     47000.00 | 2023-02-01 |          7 |
+|        8 |     49000.00 | 2023-06-01 |          8 |
+|        9 |     55000.00 | 2023-05-01 |          9 |
+|       10 |     68000.00 | 2023-05-15 |         10 |
++----------+--------------+------------+------------+
+10 rows in set (0.00 sec)
+
+mysql>
+
+
+
+
+
+
+
+mysql> CREATE VIEW PersonBasicInfo AS
+    -> SELECT PersonID, Name, Phone FROM Person;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE VIEW PersonFullDetails AS
+    -> SELECT PersonID, Name, Address, Phone, BirthDate FROM Person;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW OrganizationBasicInfo AS
+    -> SELECT OrganizationID, Name, Phone FROM Organization;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW OrganizationFullDetails AS
+    -> SELECT OrganizationID, Name, Address, Phone, BudgetNumber FROM Organization;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW EmploymentActive AS
+    -> SELECT EmploymentID, EmploymentDate, PersonID, OrganizationID
+    -> FROM Employment WHERE TerminationDate IS NULL;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW EmploymentHistory AS
+    -> SELECT EmploymentID, EmploymentDate, TerminationDate, PersonID, OrganizationID, Bonus
+    -> FROM Employment;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW PositionBasicInfo AS
+    -> SELECT PositionID, Title, Salary FROM Position;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW PositionFullDetails AS
+    -> SELECT PositionID, Title, Salary, OrganizationID FROM Position;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW EmploymentPositionCurrent AS
+    -> SELECT EmploymentPositionID, StartDate, Salary, PersonID
+    -> FROM EmploymentPosition WHERE EndDate IS NULL;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW EmploymentPositionHistory AS
+    -> SELECT EmploymentPositionID, StartDate, EndDate, Salary, PositionID, PersonID
+    -> FROM EmploymentPosition;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW PermanentEmployeeBasic AS
+    -> SELECT PersonID, BonusAmount FROM PermanentEmployee;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW PermanentEmployeeFull AS
+    -> SELECT PersonID, BonusAmount, Credit FROM PermanentEmployee;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW PartTimeEmployeeBasic AS
+    -> SELECT PersonID, ExtraHours FROM PartTimeEmployee;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW PartTimeEmployeeFull AS
+    -> SELECT PersonID, ExtraHours FROM PartTimeEmployee;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW OrganizationTypeBasic AS
+    -> SELECT OrganizationTypeID, Type FROM OrganizationType;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW OrganizationTypeDetailed AS
+    -> SELECT OrganizationTypeID, Type FROM OrganizationType;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW BonusDetailsBasic AS
+    -> SELECT BonusID, BonusType, BonusAmount FROM BonusDetails;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW BonusDetailsFull AS
+    -> SELECT BonusID, BonusType, BonusAmount, Date, EmploymentPositionID FROM BonusDetails;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW SalaryDetailsBasic AS
+    -> SELECT SalaryID, SalaryAmount FROM SalaryDetails;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW SalaryDetailsFull AS
+    -> SELECT SalaryID, SalaryAmount, Date, PositionID FROM SalaryDetails;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+mysql> CREATE TABLE AuditLog (
+    ->     LogID INT AUTO_INCREMENT PRIMARY KEY,
+    ->     ActionType VARCHAR(50),
+    ->     TableName VARCHAR(50),
+    ->     RecordID INT,
+    ->     ActionDate DATETIME DEFAULT CURRENT_TIMESTAMP
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql>
+mysql> DELIMITER //
+mysql> CREATE TRIGGER After_Person_Insert
+    -> AFTER INSERT ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO AuditLog (ActionType, TableName, RecordID)
+    ->     VALUES ('INSERT', 'Person', NEW.PersonID);
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER After_Employment_Insert
+    -> AFTER INSERT ON Employment
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO AuditLog (ActionType, TableName, RecordID, ActionDate)
+    ->     VALUES ('INSERT', 'Employment', NEW.EmploymentID, NOW());
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER After_Salary_Update
+    -> AFTER UPDATE ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO AuditLog (ActionType, TableName, RecordID, ActionDate)
+    ->     VALUES ('UPDATE', 'EmploymentPosition', NEW.EmploymentPositionID, NOW());
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER Before_Salary_Update
+    -> BEFORE UPDATE ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF NEW.Salary < OLD.Salary THEN
+    ->         SIGNAL SQLSTATE '45000'
+    ->         SET MESSAGE_TEXT = 'Salary cannot be decreased.';
+    ->     END IF;
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.03 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER Before_Person_Delete
+    -> BEFORE DELETE ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF (SELECT COUNT(*) FROM Employment WHERE PersonID = OLD.PersonID) > 0 THEN
+    ->         SIGNAL SQLSTATE '45000'
+    ->         SET MESSAGE_TEXT = 'Cannot delete an employee with employment records.';
+    ->     END IF;
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER After_Position_Delete
+    -> AFTER DELETE ON Position
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO AuditLog (ActionType, TableName, RecordID, ActionDate)
+    ->     VALUES ('DELETE', 'Position', OLD.PositionID, NOW());
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql>
+mysql> DELIMITER //
+mysql>
+mysql> CREATE FUNCTION Calculate_Age(BirthDate DATE) RETURNS INT
+    -> DETERMINISTIC
+    -> BEGIN
+    ->     RETURN TIMESTAMPDIFF(YEAR, BirthDate, CURDATE());
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> SELECT Name, Calculate_Age(BirthDate) AS Age FROM Person;
++----------------------+------+
+| Name                 | Age  |
++----------------------+------+
+| Kekeletso Lipholoana |   34 |
+| Mathabo Majoro       |   25 |
+| Tumelo Hlabanyane    |   32 |
+| Lephallo Monke       |   37 |
+| Teboho Mosito        |   29 |
+| Limpho Lephoto       |   31 |
+| Relebohile Nkhasi    |   26 |
+| Likotsi Malefane     |   31 |
+| Khotso Mphofu        |   33 |
+| Lerato Lesole        |   28 |
+| Kabelo Makhothi      |   32 |
+| Nthabi Motanyane     |   35 |
+| Tshepo Motaung       |   30 |
+| Palesa Mohau         |   27 |
+| Mat?oele Khabele     |   36 |
++----------------------+------+
+15 rows in set (0.01 sec)
+
+mysql> DELIMITER //
+mysql>
+mysql> CREATE FUNCTION Get_Total_Bonus(empID INT) RETURNS DECIMAL(10,2)
+    -> DETERMINISTIC
+    -> BEGIN
+    ->     DECLARE total DECIMAL(10,2);
+    ->
+    ->     SELECT SUM(BonusAmount) INTO total
+    ->     FROM BonusDetails
+    ->     WHERE EmploymentPositionID = empID;
+    ->
+    ->     RETURN IFNULL(total, 0);
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql>
+
+mysql> DELIMITER //
+mysql>
+mysql> CREATE PROCEDURE Get_Employment_Details(IN empID INT)
+    -> BEGIN
+    ->     SELECT e.EmploymentID, p.Name AS Employee, o.Name AS Organization,
+    ->            e.EmploymentDate, e.TerminationDate, e.Bonus
+    ->     FROM Employment e
+    ->     JOIN Person p ON e.PersonID = p.PersonID
+    ->     JOIN Organization o ON e.OrganizationID = o.OrganizationID
+    ->     WHERE e.PersonID = empID;
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql>
+mysql> CREATE PROCEDURE Update_Salary(IN empID INT, IN newSalary DECIMAL(10,2))
+    -> BEGIN
+    ->     UPDATE EmploymentPosition
+    ->     SET Salary = newSalary
+    ->     WHERE EmploymentPositionID = empID;
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+
+
+mysql> CREATE USER 'HR_Manager'@'localhost' IDENTIFIED BY 'mmma@456!';
+Query OK, 0 rows affected (0.03 sec)
+
+
+mysql> CREATE USER 'Engineer'@'localhost' IDENTIFIED BY 'hat!123#';
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> GRANT INSERT, UPDATE, DELETE, SELECT ON TT_Holdings.* TO 'HR_Manager'@'localhost';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT UPDATE(Salary) ON TT_Holdings.EmploymentPosition TO 'Engineer'@'localhost';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT SELECT ON TT_Holdings.* TO 'Engineer'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
